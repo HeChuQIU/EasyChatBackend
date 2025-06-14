@@ -1,0 +1,6 @@
+@EasyChatBackend_HostAddress = http://localhost:9283
+
+GET {{EasyChatBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
