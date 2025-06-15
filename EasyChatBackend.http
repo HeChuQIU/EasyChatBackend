@@ -4,3 +4,31 @@ GET {{EasyChatBackend_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST {{EasyChatBackend_HostAddress}}/api/account/register
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Accept: application/json
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="checkCodeKey"
+
+test-key
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+test@example.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+
+TestPassword123!
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="nickName"
+
+测试用户
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="checkCode"
+
+123456
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
