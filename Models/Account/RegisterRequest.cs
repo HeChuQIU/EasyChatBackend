@@ -3,44 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace EasyChatBackend.Models;
 
-public record RegisterRequest(string CheckCodeKey, string Email, string Password, string Nickname, string CheckCode)
-{
-    [Required]
-    public string CheckCodeKey
-    {
-        get;
-        set;
-    } = CheckCodeKey;
+public record RegisterRequest(
+    [property: Required]
+    string CheckCodeKey,
 
-    [Required]
-    [EmailAddress]
-    public string Email
-    {
-        get;
-        set;
-    } = Email;
+    [property: Required, EmailAddress]
+    string Email,
 
-    [Required]
-    [DataType(DataType.Password)]
-    public string Password
-    {
-        get;
-        set;
-    } = Password;
+    [property: Required, DataType(DataType.Password)]
+    string Password,
 
-    [Required]
-    [StringLength(50, MinimumLength = 2)]
-    [JsonPropertyName("nickName")]
-    public string Nickname
-    {
-        get;
-        set;
-    } = Nickname;
+    [property: Required, StringLength(50, MinimumLength = 2), JsonPropertyName("nickName")]
+    string Nickname,
 
-    [Required]
-    public string CheckCode
-    {
-        get;
-        set;
-    } = CheckCode;
-}
+    [property: Required]
+    string CheckCode
+);

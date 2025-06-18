@@ -69,7 +69,7 @@ public class UserInfo
     {
         get;
         set;
-    } = JoinTypeEnum.DirectJoin;
+    } = JoinTypeEnum.ApprovalRequired;
 
     /// <summary>
     /// 性别 0:女 1:男
@@ -84,7 +84,7 @@ public class UserInfo
     /// 密码
     /// </summary>
     [Required]
-    [StringLength(32, MinimumLength = 6)]
+    [StringLength(32)]
     public string Password
     {
         get;
