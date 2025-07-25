@@ -1,7 +1,7 @@
 # EasyChatBackend
-
-## ²Ù×÷
-É¾³ıÊı¾İ¿â
+è¿™ä¸ªé¡¹ç›®æ˜¯[EasyChatåç«¯](https://www.bilibili.com/video/BV1zT42127kM)çš„ASP.NETé‡å†™
+## æ“ä½œ
+åˆ é™¤æ•°æ®åº“
 ```bash
 dotnet ef database drop --force
 ```

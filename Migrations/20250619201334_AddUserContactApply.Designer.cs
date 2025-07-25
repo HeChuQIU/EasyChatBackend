@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyChatBackend.Migrations
 {
     [DbContext(typeof(EasyChatContext))]
-    [Migration("20250615143140_Initial")]
-    partial class Initial
+    [Migration("20250619201334_AddUserContactApply")]
+    partial class AddUserContactApply
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,116 @@ namespace EasyChatBackend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EasyChatBackend.Models.GroupInfo", b =>
+                {
+                    b.Property<string>("GroupId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime?>("CreateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GroupName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("GroupNotice")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("GroupOwnerId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int?>("JoinType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("GroupId");
+
+                    b.HasIndex(new[] { "GroupId" }, "idx_key_groupid")
+                        .IsUnique();
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("EasyChatBackend.Models.UserContact", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<string>("ContactId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int?>("ContactType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdateTime")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ContactId");
+
+                    b.HasIndex(new[] { "ContactId" }, "idx_contact_id");
+
+                    b.ToTable("UserContacts");
+                });
+
+            modelBuilder.Entity("EasyChatBackend.Models.UserContactApply", b =>
+                {
+                    b.Property<int>("ApplyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplyId"));
+
+                    b.Property<string>("ApplyInfo")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ApplyUserId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<string>("ContactId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int?>("ContactType")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("LastApplyTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ReceiveUserId")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplyId");
+
+                    b.HasIndex(new[] { "ApplyUserId" }, "idx_apply_user_id");
+
+                    b.HasIndex(new[] { "ContactId" }, "idx_contact_id");
+
+                    b.HasIndex(new[] { "ReceiveUserId" }, "idx_receive_user_id");
+
+                    b.ToTable("UserContactApplies");
+                });
 
             modelBuilder.Entity("EasyChatBackend.Models.UserInfo", b =>
                 {

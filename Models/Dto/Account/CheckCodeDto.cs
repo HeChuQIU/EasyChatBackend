@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace EasyChatBackend.Models.Account;
+namespace EasyChatBackend.Models.Dto.Account;
 
 public record CheckCodeDto
 {

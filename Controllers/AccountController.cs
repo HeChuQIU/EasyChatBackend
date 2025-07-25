@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 using EasyChatBackend.Common;
 using EasyChatBackend.Exceptions;
 using EasyChatBackend.Models;
-using EasyChatBackend.Models.Account;
+using EasyChatBackend.Models.Dto.Account;
 using EasyChatBackend.Options;
 using EasyChatBackend.Services;
 using Lazy.Captcha.Core;
@@ -46,14 +46,10 @@ public class AccountController(
 
     [HttpPost("register")]
     public async Task<ActionResult<ResponseVo>> Register(
-        [FromForm] [Required] string checkCodeKey,
-        [FromForm] [Required, EmailAddress] string email,
-        [FromForm] [Required, DataType(DataType.Password)]
-        string password,
-        [FromForm] [Required, StringLength(50, MinimumLength = 2)]
-        string nickname,
-        [FromForm] [Required] string checkCode)
+        [FromForm] RegisterRequestDto requestDto)
     {
+        var (checkCodeKey, email, nickname, password, checkCode) = requestDto;
+
         var cachedCode =
             await cache.GetOrCreateAsync<string?>(checkCodeKey, _ => ValueTask.FromResult<string?>(null));
 

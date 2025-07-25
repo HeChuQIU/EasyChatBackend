@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using EasyChatBackend.Models;
 
-namespace EasyChatBackend.Models.Account;
+namespace EasyChatBackend.Models.Dto.Account;
 
 public record LoginDto(
-    [property: Required]
+    [Required]
     [property: JsonPropertyName("userId")]
     string UserId,
-    [property: Required]
+    [Required]
     [property: JsonPropertyName("nickName")]
     string Nickname,
     [property: JsonPropertyName("sex")] SexEnum Sex,
@@ -20,10 +19,10 @@ public record LoginDto(
     string AreaCode,
     [property: JsonPropertyName("areaName")]
     string AreaName,
-    [property: Required]
+    [Required]
     [property: JsonPropertyName("token")]
     string Token,
-    [property: Required]
+    [Required]
     [property: JsonPropertyName("admin")]
     bool IsAdmin,
     [property: JsonPropertyName("status")] StatusEnum Status)

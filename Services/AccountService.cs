@@ -5,14 +5,14 @@ using System.Text;
 using CSharpFunctionalExtensions;
 using EasyChatBackend.Common;
 using EasyChatBackend.Models;
-using EasyChatBackend.Models.Account;
+using EasyChatBackend.Models.Dto.Account;
 using EasyChatBackend.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EasyChatBackend.Services;
 
-public class AccountService(IOptions<JwtOptions> jwtOptions, AccountContext context, Random random)
+public class AccountService(IOptions<JwtOptions> jwtOptions, EasyChatContext context, Random random)
 {
     private readonly JwtOptions _jwt = jwtOptions.Value;
 
@@ -75,6 +75,8 @@ public class AccountService(IOptions<JwtOptions> jwtOptions, AccountContext cont
         {
             var encodedPassword = isPasswordEncored ? password : EncodePassword(password);
             var userInfo = context.Users.FirstOrDefault(u => u.Email == email && u.Password == encodedPassword);
+            var isAdmin = true;
+
             if (userInfo?.Status is StatusEnum.Banned)
             {
                 return Result.Failure<LoginDto>("账号已被禁用，请联系管理员");
@@ -87,10 +89,17 @@ public class AccountService(IOptions<JwtOptions> jwtOptions, AccountContext cont
 
             userInfo.LastLoginTime = DateTime.UtcNow;
 
-            var token = GenerateToken(userInfo);
-            var loginDto = LoginDto.Create(userInfo, token, true);
+            var claims = new List<Claim>();
 
-            context.SaveChanges();
+            if (isAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
+
+            var token = GenerateToken(userInfo, claims);
+            var loginDto = LoginDto.Create(userInfo, token, isAdmin);
+
+            context.SaveChanges();  
 
             return Result.Success(loginDto);
         }
@@ -101,14 +110,14 @@ public class AccountService(IOptions<JwtOptions> jwtOptions, AccountContext cont
         }
     }
 
-    public string GenerateToken(UserInfo userInfo)
+    public string GenerateToken(UserInfo userInfo, params List<Claim> additionalClaims)
     {
         var claims = new Claim[]
         {
             new(ClaimTypes.NameIdentifier, userInfo.UserId),
             new(ClaimTypes.Email, userInfo.Email),
             new(ClaimTypes.Name, userInfo.Nickname)
-        };
+        }.Concat(additionalClaims);
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

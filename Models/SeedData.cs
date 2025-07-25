@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyChatBackend.Models;
 
-public class SeedData(AccountContext context, AccountService accountService, ILogger<SeedData> logger)
+public class SeedData(EasyChatContext context, AccountService accountService, ILogger<SeedData> logger)
 {
     public void SeedDatabase()
     {

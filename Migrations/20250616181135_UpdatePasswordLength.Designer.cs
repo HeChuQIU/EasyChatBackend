@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EasyChatBackend.Migrations
 {
-    [DbContext(typeof(AccountContext))]
+    [DbContext(typeof(EasyChatContext))]
     [Migration("20250616181135_UpdatePasswordLength")]
     partial class UpdatePasswordLength
     {

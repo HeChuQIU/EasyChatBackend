@@ -1,7 +1,11 @@
+using System.Text;
 using EasyChatBackend.Models;
 using EasyChatBackend.Options;
 using EasyChatBackend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EasyChatBackend;
 
@@ -10,6 +14,36 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Headers.TryGetValue("Token", out var token))
+                        {
+                            context.Token = token;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+        builder.Services.AddAuthorization();
 
         // Add services to the container.
 
@@ -22,14 +56,24 @@ public class Program
 
         builder.Services.AddHybridCache();
 
-        builder.Services.AddDbContext<AccountContext>(optionsBuilder =>
+        builder.Services.AddDbContext<EasyChatContext>(optionsBuilder =>
             optionsBuilder.UseSqlServer(builder.Configuration["ConnectionStrings:AccountConnection"]));
 
         builder.Services.AddTransient<SeedData>();
 
-
         builder.Services.AddTransient<Random>();
         builder.Services.AddScoped<AccountService>();
+        builder.Services.AddScoped<GroupService>();
+
+        builder.Services.AddSingleton<SysSetting>(provider =>
+        {
+            var cache = provider.GetService<HybridCache>()!;
+
+            var setting = cache.GetOrCreateAsync<SysSetting?>(SysSetting.Key,
+                _ => ValueTask.FromResult(builder.Configuration.GetSection(SysSetting.Key).Get<SysSetting>())).Result!;
+
+            return setting;
+        });
 
         builder.Services.Configure<AccountOptions>(
             builder.Configuration.GetSection(AccountOptions.Position));
